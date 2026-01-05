@@ -1,0 +1,4 @@
+# file: D:\Projects\aws-compute-referee\models.py
+# hypothesis_version: 6.149.0
+
+['App Runner', 'EC2', 'Fargate', 'Lambda', 'cost_sensitivity', 'operational_overhead', 'setup_speed', 'workload_consistency']

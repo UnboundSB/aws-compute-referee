@@ -1,0 +1,16 @@
+# AWS Compute Referee - Dependencies
+# Core Streamlit application
+streamlit>=1.28.0
+
+# Data visualization
+plotly>=5.17.0
+
+# Type checking support (built into Python 3.8+, but explicit for clarity)
+typing-extensions>=4.8.0
+
+# Testing dependencies (for development)
+pytest>=7.4.0
+hypothesis>=6.88.0
+
+# Optional: For better performance with large datasets
+pandas>=2.1.0
