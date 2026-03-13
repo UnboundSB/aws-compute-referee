@@ -15,19 +15,7 @@ from ui_components import (
     create_radar_chart,
     display_all_scores
 )
-
-
-@st.cache_data
-def cached_calculate_compatibility(operational_overhead, cost_sensitivity, workload_consistency, setup_speed):
-    """Cached version of calculate_compatibility for better performance"""
-    from models import UserWeights
-    user_weights = UserWeights(
-        operational_overhead=operational_overhead,
-        cost_sensitivity=cost_sensitivity,
-        workload_consistency=workload_consistency,
-        setup_speed=setup_speed
-    )
-    return calculate_compatibility(user_weights)
+from style_injector import inject_custom_css, add_glassmorphic_header, add_floating_particles
 
 
 def main():
@@ -40,49 +28,72 @@ def main():
         initial_sidebar_state="expanded"
     )
     
-    # Main header
-    st.title("⚖️ AWS Compute Referee")
-    st.markdown("*Choose the optimal AWS compute service based on your priorities*")
-    st.markdown("---")
+    # Inject custom CSS for glassmorphic design
+    inject_custom_css()
+    
+    # Add floating particles background
+    add_floating_particles()
+    
+    # Add beautiful glassmorphic header
+    add_glassmorphic_header()
     
     # Create sidebar configurator
     user_weights = create_sidebar_configurator()
     
-    # Calculate compatibility scores (with caching)
+    # Calculate compatibility scores
     try:
-        winner, winner_score, all_scores = cached_calculate_compatibility(
-            user_weights['operational_overhead'],
-            user_weights['cost_sensitivity'],
-            user_weights['workload_consistency'],
-            user_weights['setup_speed']
-        )
+        winner, winner_score, all_scores = calculate_compatibility(user_weights)
         explanation = get_service_explanation(winner, user_weights)
         
-        # Display results in main area
-        col1, col2 = st.columns([2, 1])
+        # Display results in main area with glassmorphic styling
+        col1, col2 = st.columns([2, 1], gap="large")
         
         with col1:
-            # Display winner and explanation
+            # Display winner and explanation with special styling
+            st.markdown('<div class="winner-glow floating">', unsafe_allow_html=True)
             display_winner(winner, winner_score, explanation)
+            st.markdown('</div>', unsafe_allow_html=True)
             
-            # Display radar chart
-            st.subheader("📈 Visual Comparison")
+            # Display radar chart with glassmorphic container
+            st.markdown("### 📈 Visual Comparison")
+            st.markdown('<div class="chart-container floating">', unsafe_allow_html=True)
             radar_chart = create_radar_chart(user_weights, winner)
             st.plotly_chart(radar_chart, use_container_width=True)
+            st.markdown('</div>', unsafe_allow_html=True)
         
         with col2:
-            # Display all scores
+            # Display all scores with animation
+            st.markdown('<div class="scores-container pulse">', unsafe_allow_html=True)
             display_all_scores(all_scores)
+            st.markdown('</div>', unsafe_allow_html=True)
             
-            # Add some helpful information
+            # Add helpful information with glassmorphic styling
             st.markdown("---")
-            st.markdown("### 💡 How it works")
             st.markdown("""
-            1. **Set your priorities** using the sliders
-            2. **Algorithm calculates** compatibility scores
-            3. **Best match** is recommended
-            4. **Visual comparison** shows the fit
-            """)
+            <div style="
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(15px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                border-radius: 15px;
+                padding: 1.5rem;
+                margin: 1rem 0;
+                animation: slideIn 0.6s ease-out;
+            ">
+                <h3 style="
+                    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                    margin-bottom: 1rem;
+                ">💡 How it works</h3>
+                <div style="color: rgba(255, 255, 255, 0.9); line-height: 1.6;">
+                    <p>🎯 <strong>Set your priorities</strong> using the sliders</p>
+                    <p>🧠 <strong>AI calculates</strong> compatibility scores</p>
+                    <p>🏆 <strong>Best match</strong> is recommended</p>
+                    <p>📊 <strong>Visual comparison</strong> shows the fit</p>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
             
     except Exception as e:
         st.error(f"Error calculating recommendations: {str(e)}")
